@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 const TransactionHistory = () => {
   return (
-    <div>TransactionHistory</div>
+    <section className='flex'>
+
+    </section>
   )
 }
 
