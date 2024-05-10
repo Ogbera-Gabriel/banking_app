@@ -28,6 +28,7 @@ const {
     }
   }
   export const signIn = async ({ email, password }: signInProps) => {
+    console.log("signing in")
     try {
       const { account } = await createAdminClient();
       const session = await account.createEmailPasswordSession(email, password);
@@ -48,6 +49,7 @@ const {
   }
 
 export const signUp = async (userData : SignUpParams) => {
+   console.log("signing up")
     const { email, password, firstName, lastName} = userData
     try {
     const { account } = await createAdminClient();

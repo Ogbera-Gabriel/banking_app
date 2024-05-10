@@ -14,6 +14,7 @@ interface CustomInputProps {
 }
 
 const CustomInput = ({ control, name, label, placeholder }: CustomInputProps) => {
+  const uniqueId = `${name}-input`;
   return (
     <FormField
       control={control}
@@ -24,6 +25,7 @@ const CustomInput = ({ control, name, label, placeholder }: CustomInputProps) =>
           <div>
             <FormControl>
               <Input
+                id={uniqueId}
                 placeholder={placeholder}
                 className="input-class"
                 type={name === "password" ? "password" : "text"}

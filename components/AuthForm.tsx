@@ -73,9 +73,10 @@ const AuthForm = ({ type }: { type: string }) => {
     } finally {
       setIsLoading(false);
     }
+    console.log(data.email, data.password);
   };
 
-  const handleSubmit = type === "sign-up" ? handleSignUp : handleSignIn;
+  const handleSubmit = type === "sign-in" ? handleSignIn : handleSignUp;
 
   return (
     <section className="auth-form">
@@ -111,7 +112,6 @@ const AuthForm = ({ type }: { type: string }) => {
         <>
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(handleSubmit)}
               className="space-y-8"
             >
               {type === "sign-in" && (
@@ -173,18 +173,20 @@ const AuthForm = ({ type }: { type: string }) => {
                       placeholder="Enter your postal code"
                     />
                   </div>
-                  <CustomInput
-                    control={form.control}
-                    name="dateOfBirth"
-                    label="Date of Birth"
-                    placeholder="YYYY-MM-DD"
-                  />
-                  <CustomInput
-                    control={form.control}
-                    name="ssn"
-                    label="SSN"
-                    placeholder="Enter your SSN"
-                  />
+                  <div className="flex gap-4">
+                    <CustomInput
+                      control={form.control}
+                      name="dateOfBirth"
+                      label="Date of Birth"
+                      placeholder="YYYY-MM-DD"
+                    />
+                    <CustomInput
+                      control={form.control}
+                      name="ssn"
+                      label="SSN"
+                      placeholder="Enter your SSN"
+                    />
+                  </div>
                   <CustomInput
                     control={form.control}
                     name="email"
@@ -202,10 +204,10 @@ const AuthForm = ({ type }: { type: string }) => {
 
               <div className="flex flex-col gap-4">
                 <Button
-                  type="submit"
+                  type="button"
                   disabled={isLoading}
                   className="form-btn"
-                  onClick={() => console.log("Button clicked")}
+                  onClick={() => handleSubmit(form.getValues())}
                 >
                   {isLoading ? (
                     <>
