@@ -60,20 +60,17 @@ const AuthForm = ({ type }: { type: string }) => {
 
   const handleSignIn = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    console.log("Sign-in data:");
     try {
       const response = await signIn({
         email: data.email,
         password: data.password,
       });
-      console.log("Sign-in response:", response);
       router.push("/");
     } catch (error) {
       console.error("Sign-in error:", error);
     } finally {
       setIsLoading(false);
     }
-    console.log(data.email, data.password);
   };
 
   const handleSubmit = type === "sign-in" ? handleSignIn : handleSignUp;
