@@ -61,7 +61,7 @@ const AuthForm = ({ type }: { type: string }) => {
   const handleSignIn = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
-      const response = await signIn({
+       await signIn({
         email: data.email,
         password: data.password,
       });
