@@ -106,7 +106,9 @@ export async function getLoggedInUser() {
       const { account } = await createSessionClient();
       const result = await account.get();
 
-      return parseStringify(result); //cannot pass large object through server-actions
+       const user = await getUserInfo({ userId: result.$id })
+
+      return parseStringify(user); //cannot pass large object through server-actions
     } catch (error) {
       return null;
     }
