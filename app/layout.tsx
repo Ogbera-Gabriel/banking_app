@@ -25,8 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${ibmPleSerif.variable}`}>{children}</body>
-      <Toaster position="top-right"/>
+      <body className={`${inter.variable} ${ibmPleSerif.variable}`}>
+        {children}
+        <Toaster position="top-right" />
+        </body>
     </html>
   );
 }

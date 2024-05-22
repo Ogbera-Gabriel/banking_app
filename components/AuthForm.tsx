@@ -16,12 +16,14 @@ import { useRouter } from "next/navigation";
 import { signIn, signUp } from "@/lib/actions/user.actions";
 import PlaidLink from "./PlaidLink";
 import toast from "react-hot-toast";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 
 const AuthForm = ({ type }: { type: string }) => {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const handleError = useErrorHandler();
 
   const formSchema = authFormSchema(type);
 
@@ -53,7 +55,7 @@ const AuthForm = ({ type }: { type: string }) => {
       const newUser = await signUp(userData);
       setUser(newUser);
     } catch (error) {
-      console.error("Sign-up error:", error);
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -62,13 +64,14 @@ const AuthForm = ({ type }: { type: string }) => {
   const handleSignIn = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
+       console.log("Attempting to sign-in with email: ", data);
        await signIn({
         email: data.email,
         password: data.password,
       });
       router.push("/");
     } catch (error) {
-      console.error("Sign-in error:", error);
+      handleError(error);
     } finally {
       setIsLoading(false);
     }

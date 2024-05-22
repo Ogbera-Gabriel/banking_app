@@ -1,12 +1,9 @@
 import toast from "react-hot-toast";
 
-const useErrorHandler = () => {
+export const useErrorHandler = () => {
     const handleError = (error: any) => {
-        if (error.response && error.response.message) {
-            toast.error(error.response.message);
-        } else {
-            toast.error("An unknown error occurred. Please try again later.");
-        }
+        const errorMessage = error.response?.message || error.message || 'An unexpected error occurred.';
+        toast.error(errorMessage);
     }
 
     return handleError;

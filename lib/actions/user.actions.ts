@@ -41,7 +41,7 @@ const {
         path: "/",
         httpOnly: true,
         sameSite: "strict",
-        secure: false,
+        secure: true,
       });
   
       const user = await getUserInfo({ userId: session.userId }) 
@@ -49,6 +49,7 @@ const {
       return parseStringify(user);
     } catch (error) {
       console.error('Error', error);
+      throw error;
     }
   }
 
@@ -95,6 +96,7 @@ export const signUp = async ({ password, ...userData}: SignUpParams) => {
     return parseStringify(newUser); //cannot pass large object through server-actions
     } catch (error) {
         console.error("Error when signing up", error);
+        throw error;
     }
 }
 
@@ -218,6 +220,7 @@ export const exchangePublicToken = async ({
       publicTokenExchanged: "complete",
     })
   } catch (error) {
-    
+    console.error(error);
+    throw error;
   }
 }
