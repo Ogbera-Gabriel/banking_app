@@ -11,7 +11,8 @@ import {
 
 import { plaidClient } from "../plaid";
 import { parseStringify } from "../utils";
-import { getBanks } from "./user.actions";
+import { getBank, getBanks } from "./user.actions";
+import { getTransactionsByBankId } from "./transaction.actions";
 
 
 
@@ -60,6 +61,64 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
   }
 };
 
+export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
+    try {
+        const bank = await getBank({ documentId: appwriteItemId });
+
+        const accountsResponse = await plaidClient.accountsGet({
+            access_token: bank.accessToken,
+        })
+
+        const accountData = accountsResponse.data.accounts[0];
+
+        const transferTransationsData = await getTransactionsByBankId({
+            bankId: bank.$id,
+        })
+
+        const transferTransactions = transferTransationsData.documents.map(
+            (transferData: Transaction) => ({
+                id: transferData.$id,
+                name: transferData.name!,
+                amount: transferData.amount!,
+                date: transferData.$createdAt,
+                paymentChannel: transferData.channel,
+                category: transferData.category,
+                type: transferData.senderBankId === bank.$id ? "debit" : "credit",
+            })
+        )
+
+        const institution = await getInstitution({
+            institutionId: accountsResponse.data.item.institution_id!,
+        })
+
+        const transactions = await getTransactions({
+            accessToken: bank?.accessToken,
+        })
+
+        const account = {
+            id: accountData.account_id,
+            availableBalance: accountData.balances.available!,
+            currentBalance: accountData.balances.current!,
+            institutionId: institution.institution_id,
+            name: accountData.name,
+            officialName: accountData.official_name,
+            mask: accountData.mask!,
+            type: accountData.type as string,
+            subtype: accountData.subtype! as string,
+            appwriteItemId: bank.$id,
+          };
+      
+            const allTransactions = [...transactions, ...transferTransactions].sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+          );
+
+          return parseStringify({ data: account, transactions: allTransactions });
+    } catch (error) {
+        console.error("An error occurred while getting account", error);
+        throw error;
+    }
+}
+
 export const getInstitution = async ({ institutionId }: getInstitutionProps) => {
     try {
       const institutionResponse = await plaidClient.institutionsGetById({
@@ -72,5 +131,41 @@ export const getInstitution = async ({ institutionId }: getInstitutionProps) => 
       return parseStringify(institution);
     } catch (error) {
         console.error("An error occurred while fetching institutions", error);
+    }
+}
+
+
+export const getTransactions = async ({
+    accessToken,
+}: getTransactionsProps) => {
+    let hasMore = true;
+    let transactions: any = [];
+
+    try {
+        while (hasMore) {
+            const response = await plaidClient.transactionsSync({
+                access_token: accessToken,
+            });
+
+            const data = response.data;
+
+            transactions = response.data.added.map((transaction) => ({
+                id: transaction.transaction_id,
+                name: transaction.name,
+                paymentChannel: transaction.payment_channel,
+                type: transaction.payment_channel,
+                accountId: transaction.account_id,
+                amount: transaction.amount,
+                pending: transaction.pending,
+                category: transaction.category ? transaction.category[0] : "",
+                date: transaction.date,
+                image: transaction.logo_url,
+            }));
+
+            hasMore = data.has_more
+        }
+         return parseStringify({ data: transactions });
+    } catch (error) {
+        console.error("An error occurred while fetching transactions", error);
     }
 }
