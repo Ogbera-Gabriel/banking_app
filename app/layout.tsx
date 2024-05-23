@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Inter, IBM_Plex_Serif } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
+import Loading from "@/components/loading";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const ibmPleSerif = IBM_Plex_Serif({
@@ -26,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${ibmPleSerif.variable}`}>
+        <Suspense fallback={<Loading />}>
         {children}
+        </Suspense>
         <Toaster position="top-right" />
         </body>
     </html>

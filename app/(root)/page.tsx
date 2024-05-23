@@ -1,9 +1,10 @@
 import HeaderBox from "@/components/HeaderBox";
 import RightSideBar from "@/components/RightSideBar";
 import TotalBalanceBox from "@/components/TotalBalanceBox";
+import Loading from "@/components/loading";
 import { getAccount, getAccounts } from "@/lib/actions/bank.actions";
 import { getLoggedInUser } from "@/lib/actions/user.actions";
-import React from "react";
+import React, { Suspense } from "react";
 
 const Home = async ({ searchParams: { id, page } }: SearchParamProps) => {
   const currentPage = Number(page as string) || 1;
@@ -15,10 +16,10 @@ const Home = async ({ searchParams: { id, page } }: SearchParamProps) => {
   const accountsData = accounts?.data;
   const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
 
-  const account = await getAccount({appwriteItemId})
-  
+  const account = await getAccount({ appwriteItemId });
+
   console.log(account);
-  
+
   return (
     <section className="home">
       <div className="home-content">
